@@ -27,47 +27,69 @@ function App() {
   ]);
 
   const [selectedYear, setSelectedYear] = useState('');
+  const [numElements, setNumElements] = useState(0);
 
   const addExpenseHandler = (expense) => {
     setExpenses((prevExpenses) => [expense, ...prevExpenses]);
   };
-  
+
   const yearChangeHandler = (event) => {
-   
-    setSelectedYear(event.target.value);
+    const selectedYearValue = event.target.value;
+    setSelectedYear(selectedYearValue);
+  
+    if (selectedYearValue !== "") {
+      const filteredExpenses = expenses.filter(
+        (expense) =>
+          new Date(expense.date).getFullYear().toString() === selectedYearValue
+      );
+      setNumElements(filteredExpenses.length);
+    }
   };
+  
+
   const filteredExpenses = selectedYear
-  ? expenses.filter(
-      (expense) => new Date(expense.date).getFullYear().toString() === selectedYear
-    )
-  : expenses;
+    ? expenses.filter(
+        (expense) =>
+          new Date(expense.date).getFullYear().toString() === selectedYear
+      )
+    : expenses;
 
   return (
     <div>
       <NewExpense onAddExpense={addExpenseHandler} />
       <h1>Lets get Started</h1>
       <form action="">
-  <select id="cars" name="cars" onChange={yearChangeHandler} value={selectedYear}>
-    <option value="">All Years</option>
-    <option value="2019">2019</option>
-    <option value="2020">2020</option>
-    <option value="2021">2021</option>
-    <option value="2022">2022</option>
-  </select>
-</form>
+        <select
+          id="cars"
+          name="cars"
+          onChange={yearChangeHandler}
+          value={selectedYear}
+        >
+          <option value="">All Years</option>
+          <option value="2019">2019</option>
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+        </select>
+      </form>
 
-   {filteredExpenses.length===0 && <p>no expenses found</p>}
-      {filteredExpenses.length > 0 && (
-        filteredExpenses.map((expense) => (
-          <Expense
-            key={expense.id}
-            title={expense.title}
-            amount={expense.amount}
-            date={expense.date}
-          />
-        ))
-      )}
-      
+      {selectedYear && (
+  <p>Number of elements: {numElements}</p>
+)}
+
+{filteredExpenses.length === 0 && <p>No expenses found</p>}
+{filteredExpenses.length > 0 && (
+  <div>
+    {filteredExpenses.map((expense) => (
+      <Expense
+        key={expense.id}
+        title={expense.title}
+        amount={expense.amount}
+        date={expense.date}
+      />
+    ))}
+  </div>
+)}
     </div>
   );
 }
